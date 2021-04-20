@@ -1,5 +1,4 @@
 import json
-
 import flask
 import requests
 from flask import Flask, request

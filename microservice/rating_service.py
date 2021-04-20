@@ -1,5 +1,4 @@
 import json
-
 import flask
 import pymongo
 from flask import Flask, request
