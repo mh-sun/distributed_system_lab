@@ -9,5 +9,6 @@ RUN pip3 install -r /app/requirements.txt
 ADD . /app
 
 EXPOSE 8001
+EXPOSE 8000
 
 CMD python3 ride_sharing_service.py

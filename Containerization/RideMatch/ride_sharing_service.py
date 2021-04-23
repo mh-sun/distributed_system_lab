@@ -31,10 +31,12 @@ def client_match():
 
         fare = get_distance(rider['loc'], rider['des']) * 2
 
-        notification = {'r_name': rider['name'], 'd_name': sel_driver['name'], 'fare': fare}
-        print("Server has paired rider %s with driver %s" % (rider['name'], sel_driver['name']))
+        notification = {'r_name': rider['name'],
+                        'd_name': sel_driver['name'], 'fare': fare}
+        print("Server has paired rider %s with driver %s" %
+              (rider['name'], sel_driver['name']))
         print("message sent to comm :", notification)
-        requests.post("http://127.0.0.1:8000/comm", json=notification)
+        requests.post("http://127.0.0.1:8003/comm", json=notification)
 
         avail_rider.remove(r)
         avail_driver.remove(sel_driverF)

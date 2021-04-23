@@ -94,6 +94,7 @@ while True:
     print("%s wants to drive" % d[0])
 
     rider_req = json.dumps(rider(r, get_location(), get_location()).__dict__)
+
     driver_req = json.dumps(driver(d, get_location()).__dict__)
 
     requests.post("http://127.0.0.1:8000/api/rider", json=rider_req)
