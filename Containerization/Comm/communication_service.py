@@ -1,19 +1,17 @@
-import flask
 from flask import Flask, request
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
 sio = SocketIO(app)
 
 
-@app.route("/comm", methods=["GET", "POST"])
+@app.route("/comm", methods=["POST"])
 def send_pair():
     info = request.json
     print("message received from ride :", info)
     sio.emit("notify", info)
-    return flask.Response(status=201)
+    return "Communication received from ride share"
 
 
 if __name__ == '__main__':
-    sio.run(app, port=8003)
+    sio.run(app, host="0.0.0.0", port=8003)

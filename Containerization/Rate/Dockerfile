@@ -9,6 +9,5 @@ RUN pip3 install -r /app/requirements.txt
 ADD . /app
 
 EXPOSE 8002
-EXPOSE 27017
 
-CMD python3 rating_service.py
+CMD ["python3", "/app/rating_service.py"]

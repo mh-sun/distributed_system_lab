@@ -1,10 +1,9 @@
-import json
-import flask
 import requests
 from flask import Flask, request
 import apscheduler.schedulers.background
 
 app = Flask(__name__)
+
 avail_rider = []
 avail_driver = []
 
@@ -17,29 +16,28 @@ def get_distance(p1, p2):
 def client_match():
     if not avail_driver:
         return
-    for r in avail_rider:
-        rider = json.loads(r)
+    for rider in avail_rider:
         mini = 50000
         sel_driver = None
 
-        sel_driverF = None
-        for d in avail_driver:
-            driver = json.loads(d)
+        for driver in avail_driver:
             if get_distance(rider["loc"], driver["loc"]) < mini:
-                sel_driverF = d
                 sel_driver = driver
 
         fare = get_distance(rider['loc'], rider['des']) * 2
 
-        notification = {'r_name': rider['name'],
-                        'd_name': sel_driver['name'], 'fare': fare}
+        notification = {
+            'r_name': rider['name'],
+            'd_name': sel_driver['name'],
+            'fare': fare
+        }
         print("Server has paired rider %s with driver %s" %
               (rider['name'], sel_driver['name']))
         print("message sent to comm :", notification)
         requests.post("http://127.0.0.1:8003/comm", json=notification)
 
-        avail_rider.remove(r)
-        avail_driver.remove(sel_driverF)
+        avail_rider.remove(rider)
+        avail_driver.remove(sel_driver)
 
 
 schedule = apscheduler.schedulers.background.BackgroundScheduler()
@@ -47,18 +45,20 @@ schedule.add_job(func=client_match, trigger="interval", seconds=5)
 schedule.start()
 
 
-@app.route("/api/rider", methods=["GET", "POST"])
+@app.route("/api/rider", methods=["POST"])
 def rider_update():
     data = request.json
+    print(data)
     avail_rider.append(data)
-    return flask.Response(status=201)
+    return "Rider Api received by Server"
 
 
-@app.route("/api/driver", methods=["GET", "POST"])
+@app.route("/api/driver", methods=["POST"])
 def driver_update():
     data = request.json
+    print(data)
     avail_driver.append(data)
-    return flask.Response(status=201)
+    return "Driver Api received by Server"
 
 
 if __name__ == "__main__":

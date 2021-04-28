@@ -8,6 +8,6 @@ RUN pip3 install -r /app/requirements.txt
 
 ADD . /app
 
-EXPOSE 8003
+#EXPOSE 8003
 
-CMD python3 communication_service.py
+CMD ["python3", "/app/communication_service.py"]
