@@ -8,7 +8,7 @@ app = Flask(__name__)
 def rating():
     data = request.json
     print("Connected")
-    myclient = pymongo.MongoClient("mongodb://0.0.0.0:27017/")
+    myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
     mydb = myclient["gorib_uberdb"]
     mycol = mydb["ratings"]
     print("rider %s gave rating %d to driver %s" %
@@ -18,4 +18,4 @@ def rating():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8002, debug=True)
+    app.run(host="127.0.0.1", port=8002)

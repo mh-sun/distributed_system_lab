@@ -1,8 +1,12 @@
-import requests
 from flask import Flask, request
+from flask_socketio import SocketIO, emit
+import requests
 import apscheduler.schedulers.background
+import pymongo
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+sio = SocketIO(app)
 
 avail_rider = []
 avail_driver = []
@@ -34,7 +38,7 @@ def client_match():
         print("Server has paired rider %s with driver %s" %
               (rider['name'], sel_driver['name']))
         print("message sent to comm :", notification)
-        requests.post("http://127.0.0.1:8003/comm", json=notification)
+        sio.emit("notify", notification)
 
         avail_rider.remove(rider)
         avail_driver.remove(sel_driver)
@@ -43,6 +47,17 @@ def client_match():
 schedule = apscheduler.schedulers.background.BackgroundScheduler()
 schedule.add_job(func=client_match, trigger="interval", seconds=5)
 schedule.start()
+
+
+@app.route("/rate", methods=["GET", "POST"])
+def rating():
+    data = request.json
+    myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
+    mydb = myclient["gorib_uberdb"]
+    mycol = mydb["ratings"]
+    print("rider %s gave rating %d to driver %s" % (data['rname'], data['rate'], data['dname']))
+    mycol.insert_one(data)
+    return "Database Updated"
 
 
 @app.route("/api/rider", methods=["POST"])
@@ -61,5 +76,5 @@ def driver_update():
     return "Driver Api received by Server"
 
 
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8001)
+if __name__ == '__main__':
+    sio.run(app, host="127.0.0.1", port=8005)
