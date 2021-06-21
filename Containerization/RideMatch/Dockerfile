@@ -1,13 +1,11 @@
 FROM python:3.8-alpine
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir /ride_service
+WORKDIR /ride_service
 
-ADD requirements.txt /app/requirements.txt
-RUN pip3 install -r /app/requirements.txt
+ADD requirements.txt /ride_service/requirements.txt
+RUN pip install -r /ride_service/requirements.txt
 
-ADD . /app
+ADD . /ride_service
 
-EXPOSE 8001
-
-CMD ["python3", "/app/ride_sharing_service.py"]
+CMD ["python","/ride_service/ride_sharing_service.py"]

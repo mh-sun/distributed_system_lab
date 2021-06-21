@@ -14,10 +14,12 @@ def get_distance(p1, p2):
 
 
 def client_match():
-    if not avail_driver:
+    if not avail_driver or not avail_rider:
         return
     for rider in avail_rider:
-        mini = 50000
+        if not avail_driver or not avail_rider:
+            return
+        mini = 500000
         sel_driver = None
 
         for driver in avail_driver:
@@ -34,7 +36,7 @@ def client_match():
         print("Server has paired rider %s with driver %s" %
               (rider['name'], sel_driver['name']))
         print("message sent to comm :", notification)
-        requests.post("http://127.0.0.1:8003/comm", json=notification)
+        requests.post("http://communication_service:8080/comm", json=notification)
 
         avail_rider.remove(rider)
         avail_driver.remove(sel_driver)
@@ -62,4 +64,4 @@ def driver_update():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8001)
+    app.run(host='0.0.0.0', port=8080)

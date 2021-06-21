@@ -3,11 +3,8 @@ import random
 import time
 import socketio
 
-hos_sio = "http://127.0.0.1:8003"
-hos_api = "http://127.0.0.1:8000"
-
 sio = socketio.Client()
-sio.connect(hos_sio)
+sio.connect("http://127.0.0.1:8003")
 
 
 def get_location():
@@ -40,7 +37,8 @@ def get_driver():
 
 def store_rider(name):
     riders.append(name)
-    busy_riders.remove(name)
+    if name in busy_riders:
+        busy_riders.remove(name)
 
 
 def store_driver(name):
@@ -58,7 +56,7 @@ def send_rating(r_name, d_name):
         "dname": d_name,
         "rate": rate
     }
-    requests.post(hos_api+"/rate", json=rate_req)
+    requests.post("http://127.0.0.1:8005/rating", json=rate_req)
 
 
 @sio.event()
@@ -74,7 +72,7 @@ riders = ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10"]
 
 drivers = [["d1", "car1"], ["d2", "car2"], [
     "d3", "car3"], ["d4", "car4"], ["d5", "car5"], ["d6", "car6"], ["d7", "car7"], ["d8", "car8"], ["d9", "car9"],
-    ["d10", "car10"]]
+           ["d10", "car10"]]
 
 busy_drivers = []
 busy_riders = []
@@ -101,7 +99,7 @@ while True:
         "loc": get_location()
     }
 
-    requests.post(hos_api+"/api/rider", json=rider_req)
-    requests.post(hos_api+"/api/driver", json=driver_req)
+    requests.post("http://127.0.0.1:8005/api/rider", json=rider_req)
+    requests.post("http://127.0.0.1:8005/api/driver", json=driver_req)
 
     time.sleep(2)

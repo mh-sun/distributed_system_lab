@@ -1,13 +1,13 @@
 FROM python:3.8-alpine
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir /communication_service
+WORKDIR /communication_service
 
-ADD requirements.txt /app/requirements.txt
-RUN pip3 install -r /app/requirements.txt
+ADD requirements.txt /communication_service/requirements.txt
+RUN pip install -r /communication_service/requirements.txt
 
-ADD . /app
+ADD . /communication_service
 
-#EXPOSE 8003
+EXPOSE 8080
 
-CMD ["python3", "/app/communication_service.py"]
+CMD ["python","/communication_service/communication_service.py"]

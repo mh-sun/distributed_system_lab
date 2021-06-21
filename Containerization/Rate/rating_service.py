@@ -1,21 +1,36 @@
-import pymongo
 from flask import Flask, request
+from flask_mongoengine import MongoEngine
+
+db = MongoEngine()
 
 app = Flask(__name__)
+db.init_app(app)
+
+app.config['MONGODB_SETTINGS'] = {
+    'db': 'Ratings',
+    'host': 'mongodb-container',
+    'port': 27017
+}
 
 
-@app.route("/rate", methods=["GET", "POST"])
+class Rating(db.Document):
+    rider = db.StringField()
+    driver = db.StringField()
+    rating = db.IntField()
+
+
+def insert_into_database(rider, driver, rate):
+    rate_info = Rating(rider=rider, driver=driver, rating=rate)
+    rate_info.save()
+
+
+@app.route("/rating", methods=["POST"])
 def rating():
     data = request.json
     print("Connected")
-    myclient = pymongo.MongoClient("mongodb://127.0.0.1:27017/")
-    mydb = myclient["gorib_uberdb"]
-    mycol = mydb["ratings"]
-    print("rider %s gave rating %d to driver %s" %
-          (data['rname'], data['rate'], data['dname']))
-    mycol.insert_one(data)
-    return "Database Updated"
+    insert_into_database(data['rname'], data['dname'], data['rate'])
+    return data
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8002)
+    app.run(host='0.0.0.0', port=8080)

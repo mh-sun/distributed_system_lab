@@ -1,13 +1,11 @@
 FROM python:3.8-alpine
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir /rating_service
+WORKDIR /rating_service
 
-ADD requirements.txt /app/requirements.txt
-RUN pip3 install -r /app/requirements.txt
+ADD requirements.txt /rating_service/requirements.txt
+RUN pip install -r /rating_service/requirements.txt
 
-ADD . /app
+ADD . /rating_service
 
-EXPOSE 8002
-
-CMD ["python3", "/app/rating_service.py"]
+CMD ["python","/rating_service/rating_service.py"]
